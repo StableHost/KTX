@@ -9,9 +9,9 @@ import RoomListPage from 'pages/Admin/RoomListPage';
 import SignupPage from 'pages/Admin/SignupPage';
 import React from 'react';
 import StudentList from 'pages/Admin/StudentList';
-import BillListPage from 'pages/Admin/BillListPage';
 import RequestsList from 'pages/Admin/Requests';
 import PickupDropoffManagement from 'pages/Admin/PickupDropoffManagement';
+import KTXGradingPage from 'pages/Admin/KTXGradingPage';
 
 // Public
 const Room = React.lazy(() => import('pages/Public/RoomMenuPage'));
@@ -30,7 +30,9 @@ const publicRoutes = [
   { path: '/home', component: HomePage },
   { path: '/room', component: Room },
   { path: '/policy/register', component: PolicyPage },
-  { path: '/admin/pickup-dropoff', component: PickupDropoffManagement }
+  
+  { path: '/admin/pickup-dropoff', component: PickupDropoffManagement },
+  { path: '/admin/grading-ai', component: KTXGradingPage },
 ];
 
 const authRoutes = [
@@ -45,9 +47,10 @@ const adminRoutes = [
   { path: '/admin/room/list', component: RoomListPage },
   { path: '/admin/room/:id', component: RoomDetailPage },
   { path: '/admin/room/add', component: RoomAddPage },
-  { path: '/admin/bill/list', component: BillListPage },
-  { path: '/admin/bill/:id', component: RoomDetailPage },
-  { path: '/admin/requests', component: RequestsList }
+  { path: '/admin/requests', component: RequestsList },
+  
+  { path: '/admin/pickup-dropoff', component: PickupDropoffManagement },
+  { path: '/admin/grading-ai', component: KTXGradingPage },
 ];
 
 const studentRoute = [

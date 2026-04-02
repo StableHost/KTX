@@ -8,10 +8,10 @@ import httpStatus from 'http-status';
 export const Verifytoken = (req, res, next) => {
   const token = req.cookies.access_token;
   if (!token) {
-    return next(createError(401, 'you are not authenticated!'));
+    return next(createError(401, 'Tài khoản chưa đăng nhập!'));
   }
   Jwt.verify(token, process.env.Jwt, (err, account) => {
-    if (err) return next(createError(403, 'Token is not valid!'));
+    if (err) return next(createError(403, 'Tài khoản đăng nhập không hợp lệ!'));
     req.account = account;
     next();
   });
@@ -22,7 +22,7 @@ export const VerifyUser = (req, res, next) => {
     if (req.account.id === req.param.id) {
       next();
     } else {
-      if (err) return next(createError(403, 'you are not authorized'));
+      if (err) return next(createError(403, 'Bạn không có quyền truy cập tài nguyên này!'));
     }
   });
 };
@@ -31,12 +31,13 @@ export const VerifyAdmin = (req, res, next) => {
   const token = req.cookies.access_token;
 
   if (!token) {
-    return res.status(401).json({ message: 'You are not authenticated!' });
+    return res.status(401).json({ message: 'Tài khoản chưa đăng nhập!' });
   }
 
   Jwt.verify(token, process.env.Jwt, (err, decodedToken) => {
     if (err) {
-      return res.status(403).json({ message: 'Token is not valid!' });
+      console.error('JWT Verification Error:', err);
+      return res.status(403).json({ message: 'Tài khoản đăng nhập không hợp lệ!' });
     }
 
     const { RoleId } = decodedToken;
@@ -44,7 +45,7 @@ export const VerifyAdmin = (req, res, next) => {
     if (RoleId === process.env.ADMIN_ROLE_ID) {
       next();
     } else {
-      return res.status(403).json({ message: 'User does not have admin privileges' });
+      return res.status(403).json({ message: 'Tài khoản không có quyền quản trị' });
     }
   });
 };
@@ -55,8 +56,6 @@ export const VerifyAdmin = (req, res, next) => {
 //   try {
 //     // Kiểm tra xem người dùng có tồn tại không
 //     const account = await Accounts.findOne({ CMND }).populate('RoleId');
-
-//     console.log(account);
 
 //     if (!account) {
 //       return res.status(401).json({ message: 'User not found' });
@@ -73,7 +72,6 @@ export const VerifyAdmin = (req, res, next) => {
 //       if (account.RoleId) {
 //         if (role && role.role === 'admin') {
 //           // Nếu có quyền admin, cho phép tiếp tục
-//           console.log("Account's role: ", role.role);
 //           next();
 //         } else {
 //           return res.status(403).json({ message: 'User does not have admin privileges' });

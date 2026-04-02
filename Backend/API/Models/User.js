@@ -52,12 +52,12 @@ const Userchema = new mongoose.Schema(
     },
     Phone: {
       type: String,
-      required: true
+      // required: true
     },
     Email: {
       type: String,
-      required: true,
-      unique: true
+      // required: true,
+      // unique: true
     },
     Photos: {
       type: [String]

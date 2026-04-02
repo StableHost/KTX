@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkrestaurant_management=self.webpackChunkrestaurant_management||[]).push([[783],{5783:(e,a,t)=>{t.r(a),t.d(a,{default:()=>s});t(2791);var n=t(184);const s=()=>(0,n.jsx)("div",{children:"RoomHistory"})}}]);
+//# sourceMappingURL=783.8df13c4b.chunk.js.map

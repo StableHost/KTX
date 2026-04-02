@@ -80,6 +80,10 @@ const PickupDropoffSchema = new mongoose.Schema(
       type: String,
       default: ''
     },
+    approverEmail: {
+      type: String,
+      default: ''
+    },
     approvedAt: {
       type: Date,
       default: null

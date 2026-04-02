@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import Modal from 'antd/es/modal/Modal';
-import UserBill from './UserBill';
 import CheckOutForm from './CheckOutForm';
 import ChangeRoomForm from './ChangeRoomForm';
 import ExtendForm from './Extend';
@@ -24,9 +23,6 @@ const ServiceModal = ({ keyService, isOpen, onCancel }) => {
       case '4':
         setTitle('Gia hạn');
         break;
-      case '5':
-        setTitle('Xem hóa đơn');
-        break;
       default:
         break;
     }
@@ -34,8 +30,6 @@ const ServiceModal = ({ keyService, isOpen, onCancel }) => {
 
   const getModalContent = () => {
     switch (title) {
-      case 'Xem hóa đơn':
-        return <UserBill title={title} onCancel={onCancel} />;
       case 'Trả phòng':
         return <CheckOutForm title={title} onCancel={onCancel} />;
       case 'Chuyển phòng':
@@ -50,7 +44,7 @@ const ServiceModal = ({ keyService, isOpen, onCancel }) => {
   };
 
   return (
-    <Modal open={isOpen} onCancel={onCancel} footer={false} width={title !== 'Xem hóa đơn' ? 950 : 1280}>
+    <Modal open={isOpen} onCancel={onCancel} footer={false} width={950}>
       {getModalContent()}
     </Modal>
   );

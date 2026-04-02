@@ -5,6 +5,8 @@ import changeRoomRequest from '../Models/requests/changeRoomRequest.js';
 import User from '../Models/User.js';
 import extendRequest from '../Models/requests/extendRequest.js';
 import fixRequest from '../Models/requests/fixRequest.js';
+import GradingLog from '../Models/GradingLog.js';
+import { ObjectId } from 'mongodb';
 
 export const createRoom = async (req, res, next) => {
   const dormitoryId = req.query.dormitoryId;
@@ -529,5 +531,400 @@ export const updateFixRequest = async (req, res, next) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to process the check-out update.' });
+  }
+};
+
+/**
+ * Lấy danh sách tất cả các phòng với điểm chấm gần đây
+ * Sử dụng MongoDB aggregation pipeline để optimize join
+ */
+export const getRoomsWithGrades = async (req, res, next) => {
+  try {
+    // Stage 1: Lookup join với GradingLog
+    const stage1_lookup = {
+      $lookup: {
+        from: 'gradinglogs',
+        localField: '_id',
+        foreignField: 'roomId',
+        as: 'gradings'
+      }
+    };
+    console.log('✓ Stage 1 (Lookup):', JSON.stringify(stage1_lookup, null, 2));
+
+    // Stage 2: Filter gradings có status = 1 (đã duyệt)
+    const stage2_filter = {
+      $addFields: {
+        gradings: {
+          $filter: {
+            input: '$gradings',
+            as: 'grading',
+            cond: {  }
+          }
+        }
+      }
+    };
+    console.log('✓ Stage 2 (Filter status=1):', JSON.stringify(stage2_filter, null, 2));
+
+    // Stage 3: Tính toán totalGradings, latestGrade, averageScore
+    const stage3_calculate = {
+      $addFields: {
+        totalGradings: { $size: '$gradings' },
+        latestGrade: {
+          $cond: [
+            { $gt: [{ $size: '$gradings' }, 0] },
+            {
+              $arrayElemAt: [
+                { $sortArray: { input: '$gradings', sortBy: { date: -1 } } },
+                0
+              ]
+            },
+            null
+          ]
+        },
+        averageScore: {
+          $cond: [
+            { $gt: [{ $size: '$gradings' }, 0] },
+            {
+              $round: [
+                {
+                  $divide: [
+                    { $sum: '$gradings.finalScore' },
+                    { $size: '$gradings' }
+                  ]
+                },
+                0
+              ]
+            },
+            'N/A'
+          ]
+        }
+      }
+    };
+    console.log('✓ Stage 3 (Calculate):', JSON.stringify(stage3_calculate, null, 2));
+
+    // Stage 4: Format response structure
+    const stage4_project = {
+      $project: {
+        _id: 1,
+        Title: 1,
+        status: 1,
+        Price: 1,
+        Slot: 1,
+        availableSlot: 1,
+        gradings: {
+          total: '$totalGradings',
+          latestScore: {
+            $cond: [
+              { $eq: ['$latestGrade', null] },
+              'N/A',
+              '$latestGrade.finalScore'
+            ]
+          },
+          averageScore: '$averageScore',
+          latestDate: {
+            $cond: [
+              { $eq: ['$latestGrade', null] },
+              null,
+              '$latestGrade.date'
+            ]
+          },
+          latestGrade: '$latestGrade',
+          allGradings: '$gradings'
+        }
+      }
+    };
+    console.log('✓ Stage 4 (Project):', JSON.stringify(stage4_project, null, 2));
+
+    // Stage 5: Sort theo Title
+    const stage5_sort = { $sort: { Title: 1 } };
+    console.log('✓ Stage 5 (Sort):', JSON.stringify(stage5_sort, null, 2));
+
+    // Chạy aggregation với tất cả stages
+    const pipeline = [
+      stage1_lookup,
+      stage2_filter,
+      stage3_calculate,
+      stage4_project,
+      stage5_sort
+    ];
+
+    console.log('\n📊 [DEBUG] Bắt đầu aggregation...');
+    const roomsData = await Room.aggregate(pipeline);
+    console.log(`✅ [DEBUG] Aggregation thành công. Tổng phòng: ${roomsData.length}`);
+
+    if (!roomsData || roomsData.length === 0) {
+      console.log('⚠️ [DEBUG] Không có phòng nào trong hệ thống');
+      return res.status(200).json({
+        success: true,
+        data: [],
+        message: 'Không có phòng nào'
+      });
+    }
+
+    // Populate user details cho roomMembers và format students
+    console.log('\n👥 [DEBUG] Populating student details từ User model...');
+    const roomsWithGrades = await Promise.all(roomsData.map(async (room) => {
+      try {
+        // Sử dụng aggregation pipeline để join vì roomMembers lưu userId trực tiếp (không nested)
+        const pipeline = [
+          {
+            $match: { _id: new ObjectId(room._id) }
+          },
+          {
+            $unwind: {
+              path: '$roomMembers',
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'roomMembers.userId',  // Nếu không có, thử từng field khác
+              foreignField: '_id',
+              as: 'userInfo'
+            }
+          },
+          {
+            $unwind: {
+              path: '$userInfo',
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              id: '$userInfo._id',
+              name: '$userInfo.HoTen',
+              code: '$userInfo.Mssv',
+              class: '$userInfo.Lop',
+              phone: '$userInfo.Phone',
+              email: '$userInfo.Email',
+              address: '$userInfo.Address',
+              truong: '$userInfo.Truong'
+            }
+          }
+        ];
+
+        console.log(`\n🔄 Room ${room.Title} - using aggregation pipeline...`);
+        const students = await Room.aggregate(pipeline);
+        
+        console.log(`✓ Room ${room.Title}: ${students.length} students from aggregation`);
+        
+        // Format lại students với fallback 'N/A' cho missing fields
+        const formattedStudents = students.map(student => ({
+          id: student.id || 'N/A',
+          name: student.name || 'N/A',
+          code: student.code || 'N/A',
+          class: student.class || 'N/A',
+          phone: student.phone || 'N/A',
+          email: student.email || 'N/A',
+          address: student.address || 'N/A',
+          truong: student.truong || 'N/A'
+        }));
+        
+        // Return room data KHÔNG include roomMembers, chỉ students array
+        return {
+          _id: room._id,
+          Title: room.Title,
+          status: room.status,
+          Price: room.Price,
+          Slot: room.Slot,
+          availableSlot: room.availableSlot,
+          gradings: room.gradings,
+          students: formattedStudents,
+          totalStudents: formattedStudents.length
+        };
+      } catch (err) {
+        console.error(`❌ Error processing room ${room.Title}:`, err.message);
+        return {
+          _id: room._id,
+          Title: room.Title,
+          status: room.status,
+          Price: room.Price,
+          Slot: room.Slot,
+          availableSlot: room.availableSlot,
+          gradings: room.gradings,
+          students: [],
+          totalStudents: 0
+        };
+      }
+    }));
+    console.log(`✅ [DEBUG] Successfully formatted ${roomsWithGrades.length} rooms with student data`);
+
+    // Debug: In ra sample data
+    console.log('\n📋 [DEBUG] Sample room data with students:');
+    if (roomsWithGrades[0]?.students && roomsWithGrades[0].students.length > 0) {
+      console.log(`Room: ${roomsWithGrades[0].Title}, Students: ${roomsWithGrades[0].totalStudents}`);
+      console.log(JSON.stringify(roomsWithGrades[0].students.slice(0, 2), null, 2));
+    }
+
+    res.status(200).json({
+      success: true,
+      data: roomsWithGrades,
+      total: roomsWithGrades.length,
+      message: 'Lấy danh sách phòng với điểm chấm và danh sách học sinh thành công'
+    });
+
+  } catch (error) {
+    console.error('❌ [ERROR] getRoomsWithGrades:', error.message);
+    console.error('Stack:', error.stack);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Lỗi khi lấy danh sách phòng với điểm chấm'
+    });
+  }
+};
+
+/**
+ * Thêm thành viên vào phòng
+ * Route: POST /rooms/add-member/:roomTitle
+ */
+export const addMemberToRoom = async (req, res, next) => {
+  try {
+    const { roomTitle } = req.params;
+    const memberData = req.body; // Dữ liệu thành viên: { id, name, code, class, phone, email, ... }
+
+    console.log(`📝 [DEBUG] Adding member to room: ${roomTitle}`);
+    console.log(`Member data:`, JSON.stringify(memberData, null, 2));
+
+    // Validate input
+    if (!roomTitle) {
+      return res.status(400).json({
+        success: false,
+        message: 'Tên phòng là bắt buộc'
+      });
+    }
+
+    if (!memberData || Object.keys(memberData).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Dữ liệu thành viên không hợp lệ'
+      });
+    }
+
+    // Tìm phòng theo tên và thêm thành viên
+    const updatedRoom = await Room.findOneAndUpdate(
+      { Title: roomTitle },
+      { $push: { roomMembers: memberData } },
+      { new: true }
+    ).populate('roomMembers.userId', 'HoTen Mssv');
+
+    if (!updatedRoom) {
+      console.log(`❌ [ERROR] Không tìm thấy phòng: ${roomTitle}`);
+      return res.status(404).json({
+        success: false,
+        message: `Không tìm thấy phòng ${roomTitle}`
+      });
+    }
+
+    console.log(`✅ [DEBUG] Successfully added member to room ${roomTitle}. Total members: ${updatedRoom.roomMembers.length}`);
+
+    res.status(200).json({
+      success: true,
+      data: updatedRoom,
+      message: `Đã thêm thành viên vào phòng ${roomTitle} thành công`
+    });
+
+  } catch (error) {
+    console.error('❌ [ERROR] addMemberToRoom:', error.message);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Lỗi khi thêm thành viên vào phòng'
+    });
+  }
+};
+
+/**
+ * Lấy danh sách học sinh trong một phòng
+ * Sử dụng aggregation pipeline để join với User model
+ */
+export const getRoomStudents = async (req, res, next) => {
+  try {
+    const roomId = req.params.roomId;
+    
+    console.log(`\n📍 [DEBUG] getRoomStudents - roomId: ${roomId}`);
+    
+    // Aggregation pipeline để join Room với User
+    const pipeline = [
+      {
+        $match: { _id: new ObjectId(roomId) }
+      },
+      {
+        $unwind: {
+          path: '$roomMembers',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'roomMembers.userId',
+          foreignField: '_id',
+          as: 'userInfo'
+        }
+      },
+      {
+        $unwind: {
+          path: '$userInfo',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$userInfo._id',
+          name: '$userInfo.HoTen',
+          code: '$userInfo.Mssv',
+          class: '$userInfo.Lop',
+          phone: '$userInfo.Phone',
+          email: '$userInfo.Email',
+          address: '$userInfo.Address',
+          truong: '$userInfo.Truong'
+        }
+      }
+    ];
+
+    console.log(`🔄 [DEBUG] Bắt đầu aggregation...`);
+    const students = await Room.aggregate(pipeline);
+    
+    console.log(`✓ Aggregation result: ${students.length} records`);
+    
+    if (!students || students.length === 0) {
+      console.log(`⚠️ Không có dữ liệu học sinh`);
+      return res.status(200).json({
+        success: true,
+        data: [],
+        total: 0,
+        message: 'Phòng này chưa có học sinh'
+      });
+    }
+
+    // Format lại students với fallback 'N/A' cho missing fields
+    const formattedStudents = students.map(student => ({
+      id: student.id || 'N/A',
+      name: student.name || 'N/A',
+      code: student.code || 'N/A',
+      class: student.class || 'N/A',
+      phone: student.phone || 'N/A',
+      email: student.email || 'N/A',
+      address: student.address || 'N/A',
+      truong: student.truong || 'N/A'
+    }));
+
+    console.log(`✅ Format xong: ${formattedStudents.length} students`);
+
+    res.status(200).json({
+      success: true,
+      data: formattedStudents,
+      total: formattedStudents.length,
+      message: 'Lấy danh sách học sinh thành công'
+    });
+
+  } catch (error) {
+    console.error('❌ Error in getRoomStudents:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Lỗi khi lấy danh sách học sinh'
+    });
   }
 };

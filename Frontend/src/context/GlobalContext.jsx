@@ -16,7 +16,7 @@ export const GlobalStoreContext = ({ children }) => {
       const res = await getProfileInformation({ userId });
       setDataUser(res);
     } catch (err) {
-      console.log(err);
+      
     }
   };
 

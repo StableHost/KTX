@@ -11,7 +11,7 @@ import CustomTable from 'components/CustomTable';
 import { PrimaryButton } from 'components/Button/PrimaryButton';
 import { DeleteButton } from 'components/Button/DeleteButton';
 import CreatePickupRequest from 'components/PickupDropoff/CreatePickupRequest';
-import { showToast } from 'utils/toast';
+import { toast } from 'react-toastify';
 import SectionHeaderWithSearch from 'components/SectionHeader/SectionHeaderWithSearch';
 
 const PickupDropoffManagement = () => {
@@ -31,10 +31,10 @@ const PickupDropoffManagement = () => {
     mutationFn: approvePickupRequest,
     onSuccess: () => {
       queryClient.invalidateQueries(['pickupDropoffRequests']);
-    //   showToast('Đã phê duyệt yêu cầu đón học sinh', 'success');
+      toast.success('Đã phê duyệt yêu cầu đón học sinh');
     },
     onError: (error) => {
-    //   showToast(error.response?.data?.message || 'Có lỗi xảy ra', 'error');
+      toast.error(error?.response?.data?.message || 'Có lỗi xảy ra, xin thử lại');
     }
   });
 
@@ -43,10 +43,10 @@ const PickupDropoffManagement = () => {
     mutationFn: rejectPickupRequest,
     onSuccess: () => {
       queryClient.invalidateQueries(['pickupDropoffRequests']);
-    //   showToast('Đã từ chối yêu cầu', 'success');
+      toast.success('Đã từ chối yêu cầu');
     },
     onError: (error) => {
-    //   showToast(error.response?.data?.message || 'Có lỗi xảy ra', 'error');
+      toast.error(error?.response?.data?.message || 'Có lỗi xảy ra, xin thử lại');
     }
   });
 
@@ -55,10 +55,10 @@ const PickupDropoffManagement = () => {
     mutationFn: updateDropoffTime,
     onSuccess: () => {
       queryClient.invalidateQueries(['pickupDropoffRequests']);
-    //   showToast('Đã cập nhật thời gian trả học sinh', 'success');
+      toast.success('Đã cập nhật thời gian trả học sinh');
     },
     onError: (error) => {
-    //   showToast(error.response?.data?.message || 'Có lỗi xảy ra', 'error');
+      toast.error(error?.response?.data?.message || 'Có lỗi xảy ra, xin thử lại');
     }
   });
 
@@ -67,10 +67,10 @@ const PickupDropoffManagement = () => {
     mutationFn: deletePickupRequest,
     onSuccess: () => {
       queryClient.invalidateQueries(['pickupDropoffRequests']);
-    //   showToast('Đã xóa yêu cầu', 'success');
+      toast.success('Đã xóa yêu cầu');
     },
     onError: (error) => {
-    //   showToast(error.response?.data?.message || 'Có lỗi xảy ra', 'error');
+      toast.error(error?.response?.data?.message || 'Có lỗi xảy ra, xin thử lại');
     }
   });
 

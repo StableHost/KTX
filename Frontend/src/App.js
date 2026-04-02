@@ -3,6 +3,7 @@ import Layout from './routes/Layout';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AuthContext from './Validate/AuthContext';
+import ChatbotWidget from './components/Chatbot/ChatbotWidget';
 
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { GlobalStoreContext } from 'context/GlobalContext';
@@ -23,6 +24,8 @@ const App = () => {
         <AuthContext>
           {/* page layout  */}
           <Layout />
+          {/* Chatbot Widget - Fixed Position */}
+          <ChatbotWidget />
         </AuthContext>
       </GlobalStoreContext>
     </QueryClientProvider>

@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import DatePicker from 'components/DatePicker';
 import moment from 'moment';
-import { inputProfileArray, profileSchema, universities } from 'utils/shared';
+import { inputProfileArray, profileSchema } from 'utils/shared';
 
 const InputProfile = ({
   htmlFor,

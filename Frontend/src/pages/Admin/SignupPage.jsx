@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createBill } from 'API/bill';
 import { getAllRooms, getDormitory, updateRoom } from 'API/room';
 import { createStudentAccount, createStudentInformation } from 'API/user';
 import { Steps } from 'antd';
@@ -24,7 +23,6 @@ const SignupPage = () => {
 
   const [selectedRoom, setSelectedRoom] = useState('');
   const [dormData, setDormData] = useState();
-  const [billData, setBillData] = useState();
 
   const { data: roomsData, isSuccess } = useQuery({
     queryKey: ['rooms'],
@@ -97,7 +95,6 @@ const SignupPage = () => {
   const createAccountInformation = useMutation({
     mutationFn: createStudentInformation,
     onSuccess: (res) => {
-      setBillData(res);
       const { HoTen, _id, CMND, Mssv, Truong, Phone, Email } = res;
 
       updateSelectedRoom.mutate({
@@ -168,34 +165,7 @@ const SignupPage = () => {
   const updateSelectedRoom = useMutation({
     mutationFn: updateRoom,
     onSuccess: () => {
-      createRoomBill.mutate({
-        data: {
-          title: 'Tiền phòng',
-          roomId: billData.room?.roomId,
-          price: selectedRoom.Price,
-          status: 0,
-          CMND: billData.CMND,
-          userId: billData._id,
-          Mssv: billData.CMND,
-          roomName: selectedRoom.Title,
-          dateIn: billData?.room?.dateIn,
-          dateOut: billData?.room?.dateOut,
-          createdBy: profileData?.HoTen,
-          updatedBy: profileData?.HoTen
-        }
-      });
-
       toast.success('Tạo tài khoản cho học sinh thành công');
-      // navigate('/admin');
-    },
-    onError: () => {
-      toast.error('Có lỗi xảy ra, xin thử lại');
-    }
-  });
-
-  const createRoomBill = useMutation({
-    mutationFn: createBill,
-    onSuccess: () => {
       navigate('/admin');
     },
     onError: () => {

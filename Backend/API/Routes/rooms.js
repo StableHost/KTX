@@ -12,6 +12,9 @@ import {
   getFixRoomRequest,
   getRoom,
   getallRoom,
+  getRoomsWithGrades,
+  getRoomStudents,
+  addMemberToRoom,
   requestChangeRoom,
   requestCheckout,
   requestExtend,
@@ -29,6 +32,7 @@ const router = express.Router();
 
 // Get
 router.get('/', getallRoom);
+router.get('/grades/all', getRoomsWithGrades);
 router.get('/checkout', getAllCheckoutRequest);
 router.get('/checkout/:userId', getCheckoutRequest);
 router.get('/change-room', VerifyAdmin, getAllChangeRoomRequest);
@@ -37,14 +41,16 @@ router.get('/extend', getAllExtendRoomRequest);
 router.get('/extend/:userId', getExtendRoomRequest);
 router.get('/fix', getAllFixRoomRequest);
 router.get('/fix/:userId', getFixRoomRequest);
+router.get('/:roomId/students', getRoomStudents);
 router.get('/:id', getRoom);
 
 //Create
-router.post('/', VerifyAdmin, createRoom);
+router.post('/', createRoom);
 router.post('/checkout', requestCheckout);
 router.post('/change-room', requestChangeRoom);
 router.post('/extend', requestExtend);
 router.post('/fix', requestFixRoom);
+router.post('/add-member/:roomTitle', addMemberToRoom);
 
 //Update
 router.put('/availability/:id', VerifyAdmin, updateRoomavAilability);

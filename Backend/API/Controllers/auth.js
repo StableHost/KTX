@@ -31,7 +31,7 @@ export const login = async (req, res, next) => {
     if (!isPasswordCorrect) return next(createError(400, 'Sai mật khẩu!'));
     const role = await Role.findOne({ _id: account.RoleId });
 
-    const token = jwt.sign({ id: account._id, CMND: account.CMND, RoleId: account.RoleId }, process.env.JWT, {
+    const token = jwt.sign({ id: account._id, CMND: account.CMND, RoleId: account.RoleId, role }, process.env.JWT, {
       expiresIn: '24h'
     });
     const { MatKhau, RoleId, CMND, _id } = account._doc;
@@ -40,7 +40,7 @@ export const login = async (req, res, next) => {
         httpOnly: true
       })
       .status(201)
-      .json({ details: { CMND, MatKhau, _id, RoleId }, role });
+      .json({ details: { CMND, MatKhau, _id, RoleId, role }, role });
   } catch (err) {
     next(err);
   }

@@ -12,7 +12,7 @@ import { VerifyAdmin } from "../Utils/Verifytoken.js";
 const router = express.Router();
 
 //Create
-router.post("/", VerifyAdmin,  createDormitory);
+router.post("/",  createDormitory);
 //Update
 router.put("/:id", VerifyAdmin,  updateDormitory);
 //Delete

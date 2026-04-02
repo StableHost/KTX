@@ -1,0 +1,142 @@
+{
+  "info": {
+    "_postman_id": "add-room-collection",
+    "name": "Room Management - Add Room",
+    "description": "Collection để tạo phòng trong hệ thống quản lý ký túc xá",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Room - Full Example",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Title\": \"A5\",\n  \"status\": 0,\n  \"Price\": 1500000,\n  \"Slot\": 4,\n  \"roomMembers\": [\n    {\n      \"userId\": \"65def456789012abcd65abc1\",\n      \"HoTen\": \"Nguyễn Văn A\",\n      \"Mssv\": \"20211234\",\n      \"CMND\": \"012345678901\",\n      \"Truong\": \"HUFLIT\",\n      \"Phone\": \"0987654321\",\n      \"Email\": \"nguyenvana@example.com\",\n      \"dateIn\": \"2026-01-01T00:00:00Z\",\n      \"dateOut\": \"2027-01-01T00:00:00Z\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms?dormitoryId={{dormitoryId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "rooms"],
+          "query": [
+            {
+              "key": "dormitoryId",
+              "value": "{{dormitoryId}}"
+            }
+          ]
+        },
+        "description": "Tạo phòng mới với đầy đủ thông tin thành viên"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Room - Simple (No Members)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Title\": \"B2\",\n  \"status\": 0,\n  \"Price\": 1200000,\n  \"Slot\": 4\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms?dormitoryId={{dormitoryId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "rooms"],
+          "query": [
+            {
+              "key": "dormitoryId",
+              "value": "{{dormitoryId}}"
+            }
+          ]
+        },
+        "description": "Tạo phòng mới không có thành viên"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Room - Full (Multiple Members)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Title\": \"C7\",\n  \"status\": 0,\n  \"Price\": 1500000,\n  \"Slot\": 4,\n  \"roomMembers\": [\n    {\n      \"userId\": \"65def456789012abcd65abc1\",\n      \"HoTen\": \"Nguyễn Văn A\",\n      \"Mssv\": \"20211234\",\n      \"CMND\": \"012345678901\",\n      \"Truong\": \"HUFLIT\",\n      \"Phone\": \"0987654321\",\n      \"Email\": \"nguyenvana@example.com\",\n      \"dateIn\": \"2026-01-01T00:00:00Z\",\n      \"dateOut\": \"2027-01-01T00:00:00Z\"\n    },\n    {\n      \"userId\": \"65def456789012abcd65abc2\",\n      \"HoTen\": \"Trần Thị B\",\n      \"Mssv\": \"20215678\",\n      \"CMND\": \"098765432109\",\n      \"Truong\": \"HUFLIT\",\n      \"Phone\": \"0912345678\",\n      \"Email\": \"tranthib@example.com\",\n      \"dateIn\": \"2026-01-01T00:00:00Z\",\n      \"dateOut\": \"2027-01-01T00:00:00Z\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms?dormitoryId={{dormitoryId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "rooms"],
+          "query": [
+            {
+              "key": "dormitoryId",
+              "value": "{{dormitoryId}}"
+            }
+          ]
+        },
+        "description": "Tạo phòng mới với nhiều thành viên"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Room - Full (Status 1 - Full)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Title\": \"D1\",\n  \"status\": 1,\n  \"Price\": 1500000,\n  \"Slot\": 4,\n  \"roomMembers\": [\n    {\n      \"userId\": \"65def456789012abcd65abc1\",\n      \"HoTen\": \"Sinh viên 1\",\n      \"Mssv\": \"20211111\",\n      \"CMND\": \"111111111111\",\n      \"dateIn\": \"2026-01-01T00:00:00Z\",\n      \"dateOut\": \"2027-01-01T00:00:00Z\"\n    },\n    {\n      \"userId\": \"65def456789012abcd65abc2\",\n      \"HoTen\": \"Sinh viên 2\",\n      \"Mssv\": \"20212222\",\n      \"CMND\": \"222222222222\",\n      \"dateIn\": \"2026-01-01T00:00:00Z\",\n      \"dateOut\": \"2027-01-01T00:00:00Z\"\n    },\n    {\n      \"userId\": \"65def456789012abcd65abc3\",\n      \"HoTen\": \"Sinh viên 3\",\n      \"Mssv\": \"20213333\",\n      \"CMND\": \"333333333333\",\n      \"dateIn\": \"2026-01-01T00:00:00Z\",\n      \"dateOut\": \"2027-01-01T00:00:00Z\"\n    },\n    {\n      \"userId\": \"65def456789012abcd65abc4\",\n      \"HoTen\": \"Sinh viên 4\",\n      \"Mssv\": \"20214444\",\n      \"CMND\": \"444444444444\",\n      \"dateIn\": \"2026-01-01T00:00:00Z\",\n      \"dateOut\": \"2027-01-01T00:00:00Z\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/rooms?dormitoryId={{dormitoryId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "rooms"],
+          "query": [
+            {
+              "key": "dormitoryId",
+              "value": "{{dormitoryId}}"
+            }
+          ]
+        },
+        "description": "Tạo phòng mới với status = 1 (phòng đầy)"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8800",
+      "type": "string"
+    },
+    {
+      "key": "dormitoryId",
+      "value": "65abc123def456789012abcd",
+      "type": "string"
+    }
+  ]
+}

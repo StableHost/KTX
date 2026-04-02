@@ -1,0 +1,2 @@
+(self.webpackChunkrestaurant_management=self.webpackChunkrestaurant_management||[]).push([[2],{6490:()=>{},4262:()=>{},2:(e,s,a)=>{"use strict";a.r(s),a.d(s,{default:()=>c});var t=a(6490),n=a.n(t),r=a(4262),u=a.n(r),l=(a(2791),a(184));const c=()=>(0,l.jsxs)("div",{className:"w-full flex justify-center items-start p-8 px-4 gap-8",children:[(0,l.jsx)(u(),{}),(0,l.jsx)(n(),{})]})}}]);
+//# sourceMappingURL=2.279891b7.chunk.js.map

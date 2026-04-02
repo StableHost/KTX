@@ -26,12 +26,6 @@ const navigation = [
     ]
   },
   {
-    name: 'Quản lý hóa đơn',
-    icon: FolderIcon,
-    value: 'bills',
-    children: [{ name: 'Danh sách hóa đơn', to: '/admin/bill/list' }]
-  },
-  {
     name: 'Quản lý đơn dịch vụ',
     icon: FolderIcon,
     value: 'request',
@@ -42,6 +36,14 @@ const navigation = [
     icon: UsersIcon,
     value: 'pickup-dropoff',
     children: [{ name: 'Danh sách đón/trả', to: '/admin/pickup-dropoff' }]
+  },
+  {
+    name: 'Quản lý chấm điểm',
+    icon: FolderIcon,
+    value: 'grading',
+    children: [
+      { name: 'Chấm điểm nhanh (AI)', to: '/admin/grading-ai' }
+    ]
   }
 ];
 

@@ -1,6 +1,7 @@
 import PickupDropoff from '../Models/PickupDropoff.js';
 import User from '../Models/User.js';
 import Room from '../Models/Room.js';
+import { sendPickupApprovalEmail, sendPickupRejectionEmail, sendDropoffNotificationEmail } from '../Utils/mailer.js';
 
 // Tạo yêu cầu đón học sinh
 export const createPickupRequest = async (req, res, next) => {
@@ -83,13 +84,14 @@ export const getPickupRequestByUser = async (req, res, next) => {
 // Phê duyệt yêu cầu đón
 export const approvePickupRequest = async (req, res, next) => {
   try {
-    const { approvedBy, pickupSignature } = req.body;
+    const { approvedBy, pickupSignature, approverEmail } = req.body;
 
     const updatedRequest = await PickupDropoff.findByIdAndUpdate(
       req.params.id,
       {
         status: 1, // Đã phê duyệt - Đã đón
         approvedBy,
+        approverEmail: approverEmail || '',
         approvedAt: new Date(),
         pickupSignature: pickupSignature || '',
         updatedBy: approvedBy
@@ -101,6 +103,31 @@ export const approvePickupRequest = async (req, res, next) => {
       return res.status(404).json({ message: 'Không tìm thấy yêu cầu' });
     }
 
+    // Gửi email thông báo phê duyệt
+    try {
+      let emailToSend = approverEmail;
+      
+      // Nếu không có email trong request, tìm từ User model
+      if (!emailToSend) {
+        const user = await User.findOne({ HoTen: approvedBy });
+        emailToSend = user?.Email;
+      }
+      console.log('Email gửi phê duyệt:', emailToSend);
+      if (emailToSend) {
+        await sendPickupApprovalEmail(
+          emailToSend,
+          updatedRequest.studentInfo.HoTen,
+          updatedRequest.studentInfo.MHV,
+          updatedRequest.studentInfo.roomTitle,
+          updatedRequest.pickupTime,
+          updatedRequest.reason
+        );
+      }
+    } catch (emailError) {
+      console.error('Lỗi gửi email phê duyệt:', emailError);
+      // Không dừng request khi lỗi gửi mail
+    }
+
     res.status(200).json(updatedRequest);
   } catch (err) {
     next(err);
@@ -110,13 +137,14 @@ export const approvePickupRequest = async (req, res, next) => {
 // Từ chối yêu cầu
 export const rejectPickupRequest = async (req, res, next) => {
   try {
-    const { approvedBy, rejectedReason } = req.body;
+    const { approvedBy, rejectedReason, approverEmail } = req.body;
 
     const updatedRequest = await PickupDropoff.findByIdAndUpdate(
       req.params.id,
       {
         status: 3, // Từ chối
         approvedBy,
+        approverEmail: approverEmail || '',
         approvedAt: new Date(),
         rejectedReason,
         updatedBy: approvedBy
@@ -128,6 +156,31 @@ export const rejectPickupRequest = async (req, res, next) => {
       return res.status(404).json({ message: 'Không tìm thấy yêu cầu' });
     }
 
+    // Gửi email thông báo từ chối
+    try {
+      let emailToSend = approverEmail;
+      
+      // Nếu không có email trong request, tìm từ User model
+      if (!emailToSend) {
+        const user = await User.findOne({ HoTen: approvedBy });
+        emailToSend = user?.Email;
+      }
+
+      if (emailToSend) {
+        await sendPickupRejectionEmail(
+          emailToSend,
+          updatedRequest.studentInfo.HoTen,
+          updatedRequest.studentInfo.MHV,
+          updatedRequest.studentInfo.roomTitle,
+          updatedRequest.reason,
+          rejectedReason
+        );
+      }
+    } catch (emailError) {
+      console.error('Lỗi gửi email từ chối:', emailError);
+      // Không dừng request khi lỗi gửi mail
+    }
+
     res.status(200).json(updatedRequest);
   } catch (err) {
     next(err);
@@ -137,7 +190,7 @@ export const rejectPickupRequest = async (req, res, next) => {
 // Cập nhật thời gian trả học sinh
 export const updateDropoffTime = async (req, res, next) => {
   try {
-    const { dropoffTime, dropoffSignature, updatedBy } = req.body;
+    const { dropoffTime, dropoffSignature, updatedBy, updaterEmail } = req.body;
 
     const updatedRequest = await PickupDropoff.findByIdAndUpdate(
       req.params.id,
@@ -152,6 +205,29 @@ export const updateDropoffTime = async (req, res, next) => {
 
     if (!updatedRequest) {
       return res.status(404).json({ message: 'Không tìm thấy yêu cầu' });
+    }
+
+    // Gửi email thông báo đã trả
+    try {
+      let emailToSend = updaterEmail || updatedRequest.approverEmail;
+      // Nếu không có email, tìm từ User model
+      if (!emailToSend) {
+        const user = await User.findOne({ HoTen: updatedBy });
+        emailToSend = user?.Email;
+      }
+      
+      if (emailToSend) {
+        await sendDropoffNotificationEmail(
+          emailToSend,
+          updatedRequest.studentInfo.HoTen,
+          updatedRequest.studentInfo.MHV,
+          updatedRequest.studentInfo.roomTitle,
+          dropoffTime
+        );
+      }
+    } catch (emailError) {
+      console.error('Lỗi gửi email trả học sinh:', emailError);
+      // Không dừng request khi lỗi gửi mail
     }
 
     res.status(200).json(updatedRequest);

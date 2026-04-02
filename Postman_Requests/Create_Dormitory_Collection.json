@@ -1,0 +1,172 @@
+{
+  "info": {
+    "_postman_id": "create-dormitory-collection",
+    "name": "Dormitory Management - Create Dormitory",
+    "desc": "Collection để tạo ký túc xá trong hệ thống quản lý ký túc xá",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Dormitory - Male Students",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Name\": \"Ký Túc Xá Nam A\",\n  \"Desc\": \"Ký túc xá dành cho sinh viên nam, gần khu vực giảng đường chính, có các tiện ích: phòng tập thể dục, phòng chơi bóng bàn, quán cà phê\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/dormitorys",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "dormitorys"]
+        },
+        "desc": "Tạo ký túc xá dành cho sinh viên nam"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Dormitory - Female Students",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Name\": \"Ký Túc Xá Nữ B\",\n  \"Desc\": \"Ký túc xá dành cho sinh viên nữ, có các tiện ích: gym, phòng tập yoga, salon sách, khu tự học yên tĩnh\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/dormitorys",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "dormitorys"]
+        },
+        "desc": "Tạo ký túc xá dành cho sinh viên nữ"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Dormitory - Online Students",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Name\": \"KTX Online Building C\",\n  \"Desc\": \"Ký túc xá hiện đại được thiết kế cho các sinh viên học tập trực tuyến, có tốc độ internet cao (Fiber 100Mbps), phòng tự học riêng biệt\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/dormitorys",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "dormitorys"]
+        },
+        "desc": "Tạo ký túc xá cho sinh viên học tập trực tuyến"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Dormitory - Premium VIP",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Name\": \"KTX VIP Premium D\",\n  \"Desc\": \"Ký túc xá cao cấp với các tiện ích: Wifi 5G, điều hòa 24/7, phòng bếp chung, phòng giải trí, bảo vệ 24/7, dịch vụ giặt ủi\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/dormitorys",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "dormitorys"]
+        },
+        "desc": "Tạo ký túc xá cao cấp VIP"
+      },
+      "response": []
+    },
+    {
+      "name": "Create Dormitory - Minimal",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{adminToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Name\": \"KTX E\",\n  \"Desc\": \"Ký túc xá cơ bản\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/dormitorys",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "dormitorys"]
+        },
+        "desc": "Tạo ký túc xá với thông tin tối thiểu"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8800",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "your_admin_jwt_token_here",
+      "type": "string"
+    },
+    {
+      "key": "dormitoryId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

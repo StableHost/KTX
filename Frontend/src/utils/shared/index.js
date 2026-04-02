@@ -37,45 +37,45 @@ export const inputProfileArray = [
 ];
 
 export const universities = [
-  {
-    id: 'HCMUT',
-    name: 'Đại học Bách khoa'
-  },
-  {
-    id: 'HCMUS',
-    name: 'Đại học Khoa học Tự nhiên'
-  },
-  {
-    id: 'USSH',
-    name: 'Đại học Khoa học Xã hội và Nhân văn'
-  },
-  {
-    id: 'HCMIU',
-    name: 'Đại học Quốc tế'
-  },
-  {
-    id: 'UIT',
-    name: 'Đại học Công nghệ Thông tin'
-  },
-  {
-    id: 'UEL',
-    name: 'Đại học Kinh tế - Luật'
-  },
-  {
-    id: 'AGU',
-    name: 'Đại học An Giang'
-  },
-  {
-    id: 'MEDVNU',
-    name: 'Khoa Y'
-  }
+  // {
+  //   id: 'HCMUT',
+  //   name: 'Đại học Bách khoa'
+  // },
+  // {
+  //   id: 'HCMUS',
+  //   name: 'Đại học Khoa học Tự nhiên'
+  // },
+  // {
+  //   id: 'USSH',
+  //   name: 'Đại học Khoa học Xã hội và Nhân văn'
+  // },
+  // {
+  //   id: 'HCMIU',
+  //   name: 'Đại học Quốc tế'
+  // },
+  // {
+  //   id: 'UIT',
+  //   name: 'Đại học Công nghệ Thông tin'
+  // },
+  // {
+  //   id: 'UEL',
+  //   name: 'Đại học Kinh tế - Luật'
+  // },
+  // {
+  //   id: 'AGU',
+  //   name: 'Đại học An Giang'
+  // },
+  // {
+  //   id: 'MEDVNU',
+  //   name: 'Khoa Y'
+  // }
 ];
 
 export const RoomMenu = [
   {
     id: 1,
     name: 'Phòng 2',
-    price: '1,250,000Đ/Tháng',
+    // price: '1,250,000Đ/Tháng',
     description: '2 giường đơn',
     imageSrc: Room2,
     imageAlt: 'Room 2'
@@ -83,7 +83,7 @@ export const RoomMenu = [
   {
     id: 2,
     name: 'Phòng 4',
-    price: '650,000Đ/Tháng',
+    // price: '650,000Đ/Tháng',
     description: '4 giường đơn',
     imageSrc: Room4,
     imageAlt: 'Room 4'
@@ -91,7 +91,7 @@ export const RoomMenu = [
   {
     id: 3,
     name: 'Phòng 6',
-    price: '240,000Đ/Tháng',
+    // price: '240,000Đ/Tháng',
     description: '3 giường đôi',
     imageSrc: Room6,
     imageAlt: 'Room 6'
@@ -101,7 +101,7 @@ export const RoomMenu = [
 export const sampleMenu = [
   {
     name: 'Phòng 2',
-    price: '1,250,000Đ/Tháng',
+    // price: '1,250,000Đ/Tháng',
     description: '2 giường đơn',
     imageSrc: Room2,
     imageAlt: 'Room 2',
@@ -116,16 +116,16 @@ export const sampleMenu = [
         description: 'Không gian rộng rãi, thoáng mát',
         image: Room2
       },
-      {
-        item_name: 'Giá phòng',
-        description: '1,250,000Đ/Tháng',
-        image: Room2
-      }
+      // {
+      //   item_name: 'Giá phòng',
+      //   description: '1,250,000Đ/Tháng',
+      //   image: Room2
+      // }
     ]
   },
   {
     name: 'Phòng 4',
-    price: '650,000Đ/Tháng',
+    // price: '650,000Đ/Tháng',
     description: '4 giường đơn',
     imageSrc: Room4,
     imageAlt: 'Room 4',
@@ -140,16 +140,16 @@ export const sampleMenu = [
         description: 'Không gian rộng rãi, thoáng mát',
         image: Room4
       },
-      {
-        item_name: 'Giá phòng',
-        description: '650,000Đ/Tháng',
-        image: Room4
-      }
+      // {
+      //   item_name: 'Giá phòng',
+      //   description: '650,000Đ/Tháng',
+      //   image: Room4
+      // }
     ]
   },
   {
     name: 'Phòng 6',
-    price: '240,000Đ/Tháng',
+    // price: '240,000Đ/Tháng',
     description: '3 giường đôi',
     imageSrc: Room6,
     imageAlt: 'Room 6',
@@ -164,11 +164,11 @@ export const sampleMenu = [
         description: 'Không gian rộng rãi, thoáng mát',
         image: Room6
       },
-      {
-        item_name: 'Giá phòng',
-        description: '240,000Đ/Tháng',
-        image: Room6
-      }
+      // {
+      //   item_name: 'Giá phòng',
+      //   description: '240,000Đ/Tháng',
+      //   image: Room6
+      // }
     ]
   }
 ];
