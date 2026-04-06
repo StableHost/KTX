@@ -378,4 +378,3 @@ DbScaffold/
 *.lock
 
 
-/Backend/API/.env
